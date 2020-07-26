@@ -44,12 +44,9 @@ module LunaPark
         end
 
         module ClassMethods
-          def substitute(origin, message = nil, *args, **opts)
-            if __initializer_has_named_args?
-              new(message, *args, **opts).substitute!(origin)
-            else
-              new(message, *args).substitute!(origin)
-            end
+          def substitute(origin, *args, **opts)
+            instance = __initializer_has_named_args? ? new(*args, **opts) : new(*args)
+            instance.substitute!(origin)
           end
 
           private
@@ -66,44 +63,12 @@ module LunaPark
         end
 
         module InstanceMethods
-          attr_accessor :origin
-          attr_writer :backtrace
+          attr_accessor :origin, :backtrace
 
           def substitute!(origin)
             self.backtrace = origin.backtrace
             self.origin    = origin
             self
-          end
-
-          def backtrace
-            super || @backtrace
-          end
-
-          # Cover up trace for current exception
-          #
-          # @example bad case
-          #   begin
-          #     call_exceptional_lib!
-          #   rescue ExceptionalLib::SomeException => e
-          #     send_alert_to_developer
-          #     raise e # => raised `ExceptionalLib::SomeException` with backtrace started
-          #             #      from current line and not contained origin exception backtrace
-          #             #      that can be very painful for debug
-          #   end
-          #
-          # @example resolve
-          #     begin
-          #       call_exceptional_lib!
-          #     rescue ExceptionalLib::SomeException => e
-          #       send_alert_to_developer
-          #       raise e.cover_up_backtrace # => raised `ExceptionalLib::SomeException` with original backtrace
-          #                                  #       so you can easily find out where exception starts
-          #     end
-          def cover_up_backtrace
-            new = dup
-            new.backtrace = backtrace
-            new.origin    = self
-            new
           end
         end
       end

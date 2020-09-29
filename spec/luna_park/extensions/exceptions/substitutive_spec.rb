@@ -78,8 +78,8 @@ module LunaPark
         rescue StandardError => e
           raise SPEC::SubstitutiveError.substitute(e, 'NewMsg')
         end
-      rescue SPEC::SubstitutiveError => exception
-        exception
+      rescue SPEC::SubstitutiveError => e
+        e
       end
 
       it 'has added message' do
@@ -94,8 +94,8 @@ module LunaPark
         rescue StandardError => e
           raise SPEC::SubstitutiveWithArgs.substitute(e, 'NewMsg', 'Oy vey!')
         end
-      rescue SPEC::SubstitutiveWithArgs => exception
-        exception
+      rescue SPEC::SubstitutiveWithArgs => e
+        e
       end
 
       it 'has added message' do
@@ -114,8 +114,8 @@ module LunaPark
         rescue StandardError => e
           raise SPEC::SubstitutiveWithOptsAndBuiltMessage.substitute(e, comment: 'Oy vey!')
         end
-      rescue SPEC::SubstitutiveWithOptsAndBuiltMessage => exception
-        exception
+      rescue SPEC::SubstitutiveWithOptsAndBuiltMessage => e
+        e
       end
 
       it 'has built message' do
@@ -130,14 +130,14 @@ module LunaPark
     context 'when substitutes substitutive exception,' do
       let(:original_substitutive) do
         raise SPEC::SubstitutiveError, 'OriginMsg'
-      rescue SPEC::SubstitutiveError => exception
-        exception
+      rescue SPEC::SubstitutiveError => e
+        e
       end
 
       let(:substituted_exception) do
         raise original_substitutive
-      rescue SPEC::SubstitutiveError => exception
-        exception
+      rescue SPEC::SubstitutiveError => e
+        e
       end
 
       it 'new exception has original backtrace' do

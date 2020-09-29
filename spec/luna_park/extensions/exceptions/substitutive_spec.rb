@@ -152,12 +152,5 @@ module LunaPark
         expect(substituted_exception.backtrace).not_to be_nil
       end
     end
-
-    def exception
-      yield
-      nil
-    rescue => e # rubocop:disable Style/RescueStandardError:
-      e
-    end
   end
 end
